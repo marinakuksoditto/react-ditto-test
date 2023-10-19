@@ -1,21 +1,28 @@
 import React, { useState, useEffect  } from "react";
 import './App.css';
 import DittoManager from "./Ditto"
-import { Ditto, LiveQuery } from "@dittolive/ditto";
+import { Ditto, LiveQuery, Document } from "@dittolive/ditto";
 
 let ditto: Ditto
 let liveQuery: LiveQuery
+
 function App() {
-  const [tasks, setCars] = useState(0)
+  const [tasks, setTasks] = useState([])
   const [error, setError] = useState('')
 
   useEffect(() => {
     async function startDitto() {
       
       ditto = DittoManager()
-      liveQuery = ditto.store.collection('tasks').findAll().observeLocal((tickets) => {
-        setCars(tickets.length)
-      })
+      liveQuery = ditto.store
+				.collection('tasks')
+				.findAll()
+				.observeLocal((items, ev) => {
+					setTasks(items.map(item => {
+						return item.value
+					}))
+					console.log(items)
+				})
     }
     
     startDitto()
@@ -36,9 +43,10 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div>
-          <h3>
-          {tasks} tasks
-          </h3>
+          { tasks.map(task => {
+							return <div> {task.name} </div>
+						})
+					}
           {error && <p style={{"color": "red"}}>{error}</p>}
           <button onClick={onAddClick}>+</button>
         </div>
