@@ -6,14 +6,14 @@ import { Ditto, LiveQuery } from "@dittolive/ditto";
 let ditto: Ditto
 let liveQuery: LiveQuery
 function App() {
-  const [cars, setCars] = useState(0)
+  const [tasks, setCars] = useState(0)
   const [error, setError] = useState('')
 
   useEffect(() => {
     async function startDitto() {
       
       ditto = DittoManager()
-      liveQuery = ditto.store.collection('cars').findAll().observeLocal((tickets) => {
+      liveQuery = ditto.store.collection('tasks').findAll().observeLocal((tickets) => {
         setCars(tickets.length)
       })
     }
@@ -27,8 +27,8 @@ function App() {
   function onAddClick (){
     if (!ditto) return setError('No ditto.')
     setError('')
-    ditto.store.collection('cars').upsert({
-      "name": 'Toyota'
+    ditto.store.collection('tasks').upsert({
+      "name": 'task1'
     })
   }
 
@@ -37,7 +37,7 @@ function App() {
       <header className="App-header">
         <div>
           <h3>
-          {cars} cars
+          {tasks} tasks
           </h3>
           {error && <p style={{"color": "red"}}>{error}</p>}
           <button onClick={onAddClick}>+</button>
