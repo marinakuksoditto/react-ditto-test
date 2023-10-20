@@ -20,9 +20,10 @@ function App() {
 				.findAll()
 				.observeLocal((items, ev) => {
 					setTasks(items.map(item => {
+						console.log('1 item: ', item.value.name)
 						return item.value
 					}))
-					console.log(items)
+					console.log('items: ', items)
 				})
     }
     
@@ -31,14 +32,6 @@ function App() {
       liveQuery?.stop()
     }
   }, []);
-
-  function onClickPlus (){
-    if (!ditto) return setError('No ditto.')
-    setError('')
-    ditto.store.collection('tasks').upsert({
-      "name": task
-    })
-  }
 
   function handleSubmit (e){
 		e.preventDefault()
@@ -60,7 +53,6 @@ function App() {
 						})
 					}
           {error && <p style={{"color": "red"}}>{error}</p>}
-          <button onClick={onClickPlus}>+</button>
 					<form onSubmit={handleSubmit}>
 					<input
 						type="text"
