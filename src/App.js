@@ -9,7 +9,7 @@ let liveQuery: LiveQuery
 function App() {
   const [tasks, setTasks] = useState([])
   const [error, setError] = useState('')
-	const [name, setName] = useState('')
+	const [task, setTask] = useState('')
 
   useEffect(() => {
     async function startDitto() {
@@ -36,7 +36,7 @@ function App() {
     if (!ditto) return setError('No ditto.')
     setError('')
     ditto.store.collection('tasks').upsert({
-      "name": name
+      "name": task
     })
   }
 
@@ -44,9 +44,9 @@ function App() {
 		e.preventDefault()
     if (!ditto) return setError('No ditto.')
     setError('')
-		console.log('name:', name)
+		console.log('name:', task)
     ditto.store.collection('tasks').upsert({
-      "name": name
+      "name": task
     })
   }
 
@@ -64,8 +64,8 @@ function App() {
 					<form onSubmit={handleSubmit}>
 					<input
 						type="text"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
+						value={task}
+						onChange={(e) => setTask(e.target.value)}
 					/>
 					<button type="submit" className="btn btn__primary btn__1g">
 						Add
