@@ -20,8 +20,12 @@ function App() {
 				.findAll()
 				.observeLocal((items, ev) => {
 					setTasks(items.map(item => {
-						console.log('1 item: ', item.value.name)
-						return item.value
+						console.log('item.value: ', item.value)
+						return {
+							"id": item.value._id,
+							"name": item.value.name,
+							"completed": item.value.isCompleted
+						}
 					}))
 					console.log('items: ', items)
 				})
@@ -39,7 +43,8 @@ function App() {
     setError('')
 		console.log('name:', task)
     ditto.store.collection('tasks').upsert({
-      "name": task
+      "name": task,
+			"isCompleted": false
     })
   }
 
@@ -49,7 +54,8 @@ function App() {
 				<h3>Tasks</h3>
         <div>
           { tasks.map(task => {
-							return <div> {task.name} </div>
+							//turn {task.name} & {task.id} into taskList
+							return <div> {task.name} {task.id} </div>
 						})
 					}
           {error && <p style={{"color": "red"}}>{error}</p>}
