@@ -14,24 +14,22 @@ function App() {
 
   useEffect(() => {
     async function startDitto() {
-      
       ditto = DittoManager()
       liveQuery = ditto.store
 				.collection('tasks')
 				.findAll()
 				.observeLocal((items, ev) => {
 					setTasks(items.map(item => {
-						console.log('item.value: ', item.value)
+						//console.log('item.value: ', item.value)
 						return {
 							"id": item.value._id,
 							"name": item.value.name,
 							"completed": item.value.completed
 						}
 					}))
-					console.log('items: ', items)
+					//console.log('items: ', items)
 				})
     }
-    
     startDitto()
     return () => {
       liveQuery?.stop()
@@ -42,7 +40,7 @@ function App() {
 		e.preventDefault()
     if (!ditto) return setError('No ditto.')
     setError('')
-		console.log('name:', task)
+		//console.log('name:', task)
     ditto.store.collection('tasks').upsert({
       "name": task,
 			"completed": false
@@ -50,6 +48,11 @@ function App() {
   }
 	
 	function toggleTaskCompleted(id) {
+		ditto.store.collection('tasks')
+		.findByID(id).update(doc => {
+			let isCompleted = doc.value.completed
+			doc.at("completed").set(!isCompleted)
+		})
 		const updatedTasks = tasks.map(task => {
 			if (id === task.id) {
 				return { ...task, completed: !task.completed }
@@ -57,9 +60,15 @@ function App() {
 			return task
 		})
 		setTasks(updatedTasks)
-		console.log('updatedTasks: ', updatedTasks)
 	}
-	
+
+	function getCompleted() {
+		const c = ditto.store
+			.collection('tasks')
+			.find("completed === false")
+		console.log('c: ', c)
+	}
+
 	const taskList = tasks.map(task => (
 		<Todo
 			name={task.name}
@@ -83,9 +92,16 @@ function App() {
 						value={task}
 						onChange={(e) => setTask(e.target.value)}
 					/>
-					<button type="submit" className="btn btn__primary btn__1g">
-						Add
+					<button type="submit">
+						Add Task
 					</button>
+					<div>
+						<button
+							type="button"
+							onClick={getCompleted}>
+							Show Completed Tasks
+						</button>
+					</div>
 					</form>
         </div>
       </header>
@@ -94,3 +110,4 @@ function App() {
 }
 
 export default App;
+
