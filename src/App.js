@@ -45,6 +45,7 @@ function App() {
       "name": task,
 			"completed": false
     })
+		setTask("")
   }
 	
 	function toggleTaskCompleted(id) {
@@ -62,10 +63,11 @@ function App() {
 		setTasks(updatedTasks)
 	}
 
-	function getCompleted() {
-		const c = ditto.store
+	async function getCompleted() {
+		const c = await ditto.store
 			.collection('tasks')
 			.find("completed === false")
+			.exec
 		console.log('c: ', c)
 	}
 
