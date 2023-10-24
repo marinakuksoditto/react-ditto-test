@@ -1,5 +1,6 @@
 import React, { useState, useEffect  } from "react";
 import './App.css';
+import Todo from "./components/Todo"
 import DittoManager from "./Ditto"
 import { Ditto, LiveQuery, Document } from "@dittolive/ditto";
 
@@ -24,7 +25,7 @@ function App() {
 						return {
 							"id": item.value._id,
 							"name": item.value.name,
-							"completed": item.value.isCompleted
+							"completed": item.value.completed
 						}
 					}))
 					console.log('items: ', items)
@@ -44,20 +45,37 @@ function App() {
 		console.log('name:', task)
     ditto.store.collection('tasks').upsert({
       "name": task,
-			"isCompleted": false
+			"completed": false
     })
   }
+	
+	function toggleTaskCompleted(id) {
+		const updatedTasks = tasks.map(task => {
+			if (id === task.id) {
+				return { ...task, completed: !task.completed }
+			}
+			return task
+		})
+		setTasks(updatedTasks)
+		console.log('updatedTasks: ', updatedTasks)
+	}
+	
+	const taskList = tasks.map(task => (
+		<Todo
+			name={task.name}
+			id={task.id}
+			toggleTaskCompleted={toggleTaskCompleted}
+		/>
+	))
 
   return (
     <div className="App">
       <header className="App-header">
 				<h3>Tasks</h3>
         <div>
-          { tasks.map(task => {
-							//turn {task.name} & {task.id} into taskList
-							return <div> {task.name} {task.id} </div>
-						})
-					}
+					<ul>
+						{taskList}
+					</ul>
           {error && <p style={{"color": "red"}}>{error}</p>}
 					<form onSubmit={handleSubmit}>
 					<input
