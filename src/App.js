@@ -41,11 +41,13 @@ function App() {
     if (!ditto) return setError('No ditto.')
     setError('')
 		//console.log('name:', task)
-    ditto.store.collection('tasks').upsert({
-      "name": task,
-			"completed": false
-    })
-		setTask("")
+		if (task.length !==0) {
+			ditto.store.collection('tasks').upsert({
+				"name": task,
+				"completed": false
+			})
+			setTask("")
+		}
   }
 	
 	function toggleTaskCompleted(id) {
