@@ -1,6 +1,7 @@
 import React, { useState, useEffect  } from "react";
 import './App.css';
 import Todo from "./components/Todo"
+import Completed from "./components/Completed"
 import DittoManager from "./Ditto"
 import { Ditto, LiveQuery, Document } from "@dittolive/ditto";
 
@@ -50,6 +51,19 @@ function App() {
 		}
   }
 	
+	function getCompleted (task){
+		if (task.completed === true) {
+			return task.name
+		}
+	}
+
+	const showCompleted = tasks.filter(getCompleted)
+		.map(task => ( 
+			<Completed
+				name={task.name}
+			/>
+		))
+
 	function toggleTaskCompleted(id) {
 		ditto.store.collection('tasks')
 		.findByID(id).update(doc => {
@@ -65,14 +79,6 @@ function App() {
 		setTasks(updatedTasks)
 	}
 
-	async function getCompleted() {
-		const c = await ditto.store
-			.collection('tasks')
-			.find("completed === false")
-			.exec
-		console.log('c: ', c)
-	}
-
 	const taskList = tasks.map(task => (
 		<Todo
 			name={task.name}
@@ -81,14 +87,22 @@ function App() {
 		/>
 	))
 
+	async function clearTasks() {
+		//mark items as deleted in ditto
+		setTasks([])
+	}
+
   return (
     <div className="App">
       <header className="App-header">
+			<div className="content">
 				<h3>Tasks</h3>
-        <div>
+        <div className="tasklist">
 					<ul>
 						{taskList}
 					</ul>
+				</div>
+				<div>
           {error && <p style={{"color": "red"}}>{error}</p>}
 					<form onSubmit={handleSubmit}>
 					<input
@@ -102,12 +116,19 @@ function App() {
 					<div>
 						<button
 							type="button"
-							onClick={getCompleted}>
-							Show Completed Tasks
+							onClick={clearTasks}>
+							Clear Tasks
 						</button>
 					</div>
 					</form>
-        </div>
+					<div>
+						<h3>Completed Tasks</h3>
+						<ul>
+							{showCompleted}
+						</ul>
+					</div>
+				</div>
+			</div>
       </header>
     </div>
   );
