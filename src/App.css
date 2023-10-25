@@ -37,6 +37,18 @@
   }
 }
 
+.tasklist {
+	background-color: #889999;
+	display: flex;
+	padding-right: 40px;
+}
+
+.cb {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
 ul {
 	list-style: none;
 }
